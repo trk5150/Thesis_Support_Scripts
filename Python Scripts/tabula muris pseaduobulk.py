@@ -21,8 +21,8 @@ meta = adata.var
 
 # Define which column in `obs` contains sample and cell type
 sample_col = "observation_joinid"   # Change this to match your metadata
-#celltype_col = "cell_type" # Change this to match your metadata
-celltype_col = "tissue_FACS_droplet" # Change this to match your metadata
+celltype_col = "cell_type" # Change this to match your metadata
+#celltype_col = "tissue_FACS_droplet" # Change this to match your metadata
 
 # Define the gene of interest
 gene_of_interest = "Gm572"  # Replace with the actual gene name
@@ -36,11 +36,7 @@ gene_id = adata.var.index[adata.var["gene_symbols"] == gene_of_interest][0]  # G
 # Get the index of the gene in the matrix
 gene_idx = list(adata.var.index).index(gene_id)  # Converts the index to a list and finds position
 
-
 # Use sparse slicing to keep memory usage low
-gene_counts = adata.X[:, gene_idx]
-
-# Ensure sparse matrix slicing works correctly
 if sp.issparse(adata.X):
     gene_counts = adata.X[:, gene_idx].toarray().flatten()
 else:
@@ -55,5 +51,16 @@ gene_df = pd.DataFrame({
 # Aggregate counts at the cell type level
 pseudobulk_gene = gene_df.groupby("cell_type")["gene_count"].sum().reset_index()
 
+# Count the number of cells per cell type
+cell_counts = gene_df["cell_type"].value_counts().reset_index()
+cell_counts.columns = ["cell_type", "cell_count"]
+
+# Merge with pseudobulk gene counts
+pseudobulk_gene = pseudobulk_gene.merge(cell_counts, on="cell_type")
+
+# Normalize by the number of cells in each cell type
+pseudobulk_gene["normalized_gene_count"] = pseudobulk_gene["gene_count"] / pseudobulk_gene["cell_count"]
+
 # Save to CSV (optional)
-pseudobulk_gene.to_csv("C://Users//tik105//Downloads//pseudobulk_counts.csv", index=False)
+pseudobulk_gene.to_csv("C://Users//tik105//Downloads//panc_pseudobulk_normalized_counts_cell-type.csv", index=False)
+
