@@ -9,7 +9,7 @@
 library("seqinr")
 
 # --- User-defined parameters ---
-proteinArchitectureFile <- "C://Users//tik105//OneDrive - Harvard University//Atollin Paper//Conservation//PlotProtein//C1orf127_architecture_file.txt"  # Path to the architecture file
+proteinArchitectureFile <- "C://Users//tik105//OneDrive - Harvard University//Atollin Paper//Conservation//PlotProtein//C_architecture_file.txt"  # Path to the architecture file
 alignmentFile <- "C://Users//tik105//OneDrive - Harvard University//Atollin Paper//Conservation//Aligned_Subset_sequence.fas"            # Path to the FASTA alignment file
 referenceSequencePositionInFile <- 1              # Reference sequence position in the alignment (e.g., 1 for the first sequence)
 nameOfYourQuery <- "ProteinName"                  # Name of the protein for the plot
@@ -102,3 +102,4 @@ for (i in 1:nrow(pa)) {
 dev.off()  # Close the .tif device
 # Inform the user of output
 cat("Plot saved as:", paste(nameOfYourQuery, "_protein_plot.pdf", sep=""), "\n")
+
